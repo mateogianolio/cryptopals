@@ -3,7 +3,9 @@ use std::str;
 
 fn main() {
     let mut bytes: Vec<u8> = Vec::new();
-    io::stdin().read_to_end(&mut bytes).expect("Could not read input.");
+    io::stdin()
+        .read_to_end(&mut bytes)
+        .expect("Could not read input.");
 
     let lhs: Vec<u8> = cryptopals::hex::decode(&bytes);
 
@@ -12,6 +14,10 @@ fn main() {
         let decrypted: Vec<u8> = cryptopals::xor_single_byte(&lhs, &byte);
         let score = cryptopals::score::englishness(&decrypted);
 
-        println!("(score: {}): {}", score, str::from_utf8(&decrypted).unwrap());
+        println!(
+            "(score: {}): {}",
+            score,
+            str::from_utf8(&decrypted).unwrap()
+        );
     }
 }

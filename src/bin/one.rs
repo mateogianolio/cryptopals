@@ -8,7 +8,7 @@ fn main() {
 
     // Convert hex input to bytes
     let bytes: Vec<u8> = cryptopals::hex::decode(&bytes);
-    
+
     println!("bytes (base10): {:?}", bytes);
 
     let bytes: Vec<u8> = cryptopals::base64::encode(&bytes);

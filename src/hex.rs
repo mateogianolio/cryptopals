@@ -14,10 +14,7 @@ fn decode_chunk(chunk: &[u8]) -> u8 {
 }
 
 pub fn decode(bytes: &[u8]) -> Vec<u8> {
-    bytes
-        .chunks(2)
-        .map(decode_chunk)
-        .collect()
+    bytes.chunks(2).map(decode_chunk).collect()
 }
 
 fn encode_chunk(chunk: &[u8]) -> Vec<u8> {
@@ -28,11 +25,7 @@ fn encode_chunk(chunk: &[u8]) -> Vec<u8> {
 }
 
 pub fn encode(bytes: &[u8]) -> Vec<u8> {
-    bytes
-        .chunks(1)
-        .map(encode_chunk)
-        .flatten()
-        .collect()
+    bytes.chunks(1).map(encode_chunk).flatten().collect()
 }
 
 #[cfg(test)]
@@ -40,14 +33,18 @@ mod tests {
     #[test]
     fn test_decode_hex() {
         let input: Vec<u8> = b"000102030405060708090a0b0c0d0e0f".to_vec();
-        let output: Vec<u8> = vec![0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8];
+        let output: Vec<u8> = vec![
+            0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8,
+        ];
 
         assert_eq!(super::decode(&input), output);
     }
 
     #[test]
     fn test_encode_hex() {
-        let input: Vec<u8> = vec![0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8];
+        let input: Vec<u8> = vec![
+            0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8,
+        ];
         let output: Vec<u8> = b"000102030405060708090a0b0c0d0e0f".to_vec();
 
         assert_eq!(super::encode(&input), output);

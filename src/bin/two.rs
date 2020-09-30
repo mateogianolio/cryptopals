@@ -3,7 +3,9 @@ use std::str;
 
 fn main() {
     let mut bytes: Vec<u8> = Vec::new();
-    io::stdin().read_to_end(&mut bytes).expect("Could not read input.");
+    io::stdin()
+        .read_to_end(&mut bytes)
+        .expect("Could not read input.");
 
     let mut iter = bytes.split(|byte| *byte == b'\n');
 

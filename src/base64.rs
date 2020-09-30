@@ -37,18 +37,16 @@ fn encode_chunk(chunk: &[u8]) -> Vec<u8> {
 }
 
 pub fn encode(bytes: &[u8]) -> Vec<u8> {
-    return bytes
-        .chunks(3)
-        .map(encode_chunk)
-        .flatten()
-        .collect();
+    return bytes.chunks(3).map(encode_chunk).flatten().collect();
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn test_encode_base64() {
-        let input: Vec<u8> = vec![0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8];
+        let input: Vec<u8> = vec![
+            0u8, 1u8, 2u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8,
+        ];
         let output: Vec<u8> = b"AAECAwQFBgcICQoLDA0ODw==".to_vec();
 
         assert_eq!(super::encode(&input), output);
