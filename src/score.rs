@@ -22,3 +22,6 @@ pub fn englishness(bytes: &[u8]) -> f64 {
         .map(|(i, count)| (FREQUENCY[i] * count / bytes.len() as f64).sqrt())
         .sum()
 }
+
+#[cfg(test)]
+mod tests {}
