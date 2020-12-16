@@ -8,33 +8,24 @@ fn main() {
         .read_to_end(&mut bytes)
         .expect("Could not read input.");
 
-    let lines: Vec<Vec<u8>> = bytes
-        .split(|byte| *byte == b'\n')
-        .map(|line| hex::decode(&line))
-        .collect();
+    for line in bytes.split(|byte| *byte == b'\n') {
+        let line = hex::decode(&line);
 
-    let mut results: Vec<(f64, Vec<u8>)> = lines
-        .iter()
-        .map(|line| {
-            let mut results: Vec<(f64, Vec<u8>)> = (0u8..=255u8)
-                .map(|byte| {
-                    let decrypted = xor_single_byte(&line, &byte);
-                    let score = score::englishness(&decrypted);
-                    (score, decrypted)
-                })
-                .collect();
+        for byte in 0u8..=255u8 {
+            let decrypted = xor_single_byte(&line, &byte);
+            let score = englishness(&decrypted);
 
-            results.sort_by(|(a, _), (b, _)| b.partial_cmp(&a).unwrap());
-            results.first().cloned().unwrap()
-        })
-        .collect();
+            if let Ok(result) = str::from_utf8(&decrypted) {
+                if score < 0.7 {
+                    continue;
+                }
 
-    results.sort_by(|(a, _), (b, _)| b.partial_cmp(&a).unwrap());
-    results.iter().take(5).for_each(|(score, decrypted)| {
-        println!(
-            "{:.2}: {}\t",
-            score,
-            str::from_utf8(&decrypted).unwrap_or("Could not parse string.")
-        )
-    });
+                println!(
+                    "{:.2}: {}\t",
+                    score,
+                    result
+                )
+            }
+        }
+    }
 }

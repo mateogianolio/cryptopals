@@ -12,7 +12,7 @@ fn main() {
     let mut results: Vec<(f64, Vec<u8>)> = (0u8..=255u8)
         .map(|byte| {
             let decrypted = xor_single_byte(&bytes, &byte);
-            let score = score::englishness(&decrypted);
+            let score = englishness(&decrypted);
             (score, decrypted)
         })
         .collect();
