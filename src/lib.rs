@@ -28,7 +28,7 @@ pub fn englishness(bytes: &[u8]) -> f64 {
         .sum()
 }
 
-pub fn distance(a: &[u8], b: &[u8]) -> i32 {
+pub fn hamming_distance(a: &[u8], b: &[u8]) -> i32 {
     let mut differing_bits: i32 = 0;
     for mut byte in xor_bytes(a, b) {
         while byte != 0 {
