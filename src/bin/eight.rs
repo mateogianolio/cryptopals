@@ -1,16 +1,11 @@
 use cryptopals::*;
 use std::io::{self, Read};
-// use std::str;
-// use openssl::symm::{decrypt, Cipher};
 
 fn main() {
     let mut bytes: Vec<u8> = Vec::new();
     io::stdin()
         .read_to_end(&mut bytes)
         .expect("Could not read input.");
-    
-    // let key: &[u8] = b"YELLOW SUBMARINE";
-    // let cipher = Cipher::aes_128_ecb();
 
     // stateless and deterministic
     // same 16 byte plaintext block will always produce the same 16 byte ciphertext

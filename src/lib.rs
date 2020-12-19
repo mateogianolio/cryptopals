@@ -40,6 +40,17 @@ pub fn hamming_distance(a: &[u8], b: &[u8]) -> i32 {
     differing_bits
 }
 
+pub fn pkcs7(bytes: &[u8], block_size: usize) -> Vec<u8> {
+    let pad_byte: u8 = (block_size - bytes.len()) as u8;
+    let mut padded_bytes: Vec<u8> = vec![pad_byte; block_size];
+
+    for (i, byte) in bytes.iter().enumerate() {
+        padded_bytes[i] = *byte;
+    }
+
+    padded_bytes
+}
+
 pub fn xor_bytes(a: &[u8], b: &[u8]) -> Vec<u8> {
     a.iter().zip(b).map(|(a, b)| a ^ b).collect()
 }
@@ -63,6 +74,15 @@ mod tests {
 
         let output: i32 = 37;
 
-        assert_eq!(super::distance(&a, &b), output)
+        assert_eq!(super::hamming_distance(&a, &b), output)
+    }
+
+    #[test]
+    fn test_pkcs7() {
+        let input: Vec<u8> = b"YELLOW SUBMARINE".to_vec();
+        let block_size: usize = 20;
+        let output: Vec<u8> = b"YELLOW SUBMARINE\x04\x04\x04\x04".to_vec();
+
+        assert_eq!(super::pkcs7(&input, block_size), output);
     }
 }
