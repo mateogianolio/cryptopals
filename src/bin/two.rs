@@ -12,8 +12,11 @@ fn main() {
         .split(|byte| *byte == b'\n')
         .map(|line| hex::decode(&line))
         .collect();
-    
+
     let (a, b) = (&lines[0], &lines[1]);
 
-    println!("{}", str::from_utf8(&hex::encode(&crypto::xor_bytes(&a, &b))).unwrap());
+    println!(
+        "{}",
+        str::from_utf8(&hex::encode(&crypto::xor_bytes(&a, &b))).unwrap()
+    );
 }

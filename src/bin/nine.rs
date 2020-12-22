@@ -6,7 +6,7 @@ fn main() {
     io::stdin()
         .read_to_end(&mut bytes)
         .expect("Could not read input.");
-    
+
     // ignore newlines
     for line in bytes.split(|byte| *byte == b'\n') {
         let padded_line = pkcs7(&line, 20);

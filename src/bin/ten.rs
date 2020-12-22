@@ -1,7 +1,7 @@
 use cryptopals::*;
+use openssl::symm::{decrypt, Cipher};
 use std::io::{self, Read};
 use std::str;
-use openssl::symm::{decrypt, Cipher};
 
 fn main() {
     let mut bytes: Vec<u8> = Vec::new();

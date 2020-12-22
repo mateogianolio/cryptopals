@@ -19,5 +19,8 @@ fn main() {
     let bytes = base64::decode(&bytes);
     let key: &[u8] = b"YELLOW SUBMARINE";
 
-    println!("{}", str::from_utf8(&crypto::decrypt_aes_128_ecb(&bytes, &key)).unwrap());
+    println!(
+        "{}",
+        str::from_utf8(&crypto::decrypt_aes_128_ecb(&bytes, &key)).unwrap()
+    );
 }

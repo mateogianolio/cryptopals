@@ -48,7 +48,12 @@ fn decode_chunk(chunk: &[u8]) -> Vec<u8> {
         .iter()
         .cloned()
         .filter(|byte| *byte != b'=')
-        .map(|byte| BASE64_TABLE.iter().position(|&base64_byte| base64_byte == byte).unwrap() as u8)
+        .map(|byte| {
+            BASE64_TABLE
+                .iter()
+                .position(|&base64_byte| base64_byte == byte)
+                .unwrap() as u8
+        })
         .collect();
 
     if chunk.len() == 2 {
