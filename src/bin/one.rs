@@ -8,8 +8,8 @@ fn main() {
         .read_to_end(&mut bytes)
         .expect("Could not read input.");
 
-    let bytes = hex::decode(&bytes);
-    let bytes = base64::encode(&bytes);
-
-    println!("{}", str::from_utf8(&bytes).unwrap());
+    println!(
+        "{}",
+        str::from_utf8(&hex::decode(&base64::decode(&bytes))).unwrap()
+    );
 }

@@ -12,9 +12,8 @@ fn main() {
         .split(|byte| *byte == b'\n')
         .map(|line| hex::decode(&line))
         .collect();
+    
+    let (a, b) = (&lines[0], &lines[1]);
 
-    let xor = xor_bytes(&lines[0], &lines[1]);
-    let xor = hex::encode(&xor);
-
-    println!("{}", str::from_utf8(&xor).unwrap());
+    println!("{}", str::from_utf8(&hex::encode(&crypto::xor_bytes(&a, &b))).unwrap());
 }

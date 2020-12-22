@@ -9,8 +9,7 @@ fn main() {
         .expect("Could not read input.");
 
     for line in bytes.split(|byte| *byte == b'\n') {
-        let line = xor_repeating_key(&line, b"ICE");
-        let line = hex::encode(&line);
+        let line = hex::encode(&crypto::xor_repeating_key(&line, b"ICE"));
         println!("{}", str::from_utf8(&line).unwrap());
     }
 }

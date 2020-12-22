@@ -2,6 +2,11 @@ use cryptopals::*;
 use std::io::{self, Read};
 use std::str;
 
+struct XORResult {
+    score: f64,
+    bytes: Vec<u8>,
+}
+
 fn main() {
     let mut bytes: Vec<u8> = Vec::new();
     io::stdin()
@@ -9,16 +14,15 @@ fn main() {
         .expect("Could not read input.");
 
     let bytes = hex::decode(&bytes);
-    let mut results: Vec<(f64, Vec<u8>)> = (0u8..=255u8)
+    let top_result: XORResult = (0u8..=255u8)
         .map(|byte| {
-            let decrypted = xor_single_byte(&bytes, &byte);
-            let score = englishness(&decrypted);
-            (score, decrypted)
-        })
-        .collect();
+            let bytes = crypto::xor_single_byte(&bytes, &byte);
+            let score = englishness(&bytes);
 
-    results.sort_by(|(a, _), (b, _)| b.partial_cmp(&a).unwrap());
-    results.iter().take(5).for_each(|(score, decrypted)| {
-        println!("{:.2}: {}\t", score, str::from_utf8(&decrypted).unwrap())
-    });
+            XORResult { score, bytes }
+        })
+        .max_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
+        .unwrap();
+
+    println!("{}", str::from_utf8(&top_result.bytes).unwrap());
 }

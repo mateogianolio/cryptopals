@@ -2,6 +2,16 @@ use cryptopals::*;
 use std::io::{self, Read};
 use std::str;
 
+struct KeyResult {
+    size: usize,
+    score: f64,
+}
+
+struct XORResult {
+    byte: u8,
+    score: f64,
+}
+
 fn main() {
     let mut bytes: Vec<u8> = Vec::new();
     io::stdin()
@@ -15,30 +25,31 @@ fn main() {
         .filter(|byte| *byte != b'\n')
         .collect();
 
-    // decode
     let bytes = base64::decode(&bytes);
 
-    let mut results: Vec<(usize, f64)> = Vec::new();
-
     // guess key sizes in range [2,40]
-    for keysize in 2..=40 {
-        let b1 = &bytes[0..keysize];
-        let b2 = &bytes[keysize..keysize * 2];
-        let b3 = &bytes[keysize * 2..keysize * 3];
-        let b4 = &bytes[keysize * 3..keysize * 4];
+    let mut results: Vec<KeyResult> = (2..=40)
+        .map(|size| {
+            let b1 = &bytes[0..size];
+            let b2 = &bytes[size..size * 2];
+            let b3 = &bytes[size * 2..size * 3];
+            let b4 = &bytes[size * 3..size * 4];
 
-        let distance =
-            hamming_distance(&b1, &b2) + hamming_distance(&b2, &b3) + hamming_distance(&b3, &b4);
-        let normalized_distance = distance as f64 / (keysize as f64 * 3.0);
+            let distance = hamming_distance(&b1, &b2)
+                + hamming_distance(&b2, &b3)
+                + hamming_distance(&b3, &b4);
+            let score = distance as f64 / (size as f64 * 3.0);
 
-        results.push((keysize, normalized_distance));
-    }
+            KeyResult { size, score }
+        })
+        .collect();
 
-    results.sort_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap());
+    // sort by score
+    results.sort_by(|a, b| a.score.partial_cmp(&b.score).unwrap());
 
     // test breaking xor with top 5 results
-    for (keysize, _) in &results[0..5] {
-        let mut key: Vec<u8> = Vec::new();
+    for result in &results[0..5] {
+        let mut key_candidate: Vec<u8> = Vec::new();
 
         // we want to transpose
         // [1, 2, 3, 4, 5]
@@ -48,31 +59,31 @@ fn main() {
         // [1, 6, ...]
         // [2, 7, ...]
         // [...]
-        let blocks: Vec<&[u8]> = bytes.chunks_exact(*keysize).collect();
-        for i in 0..*keysize {
+        let blocks: Vec<&[u8]> = bytes.chunks_exact(result.size).collect();
+        for i in 0..result.size {
             let transposed_block: Vec<u8> = blocks.iter().map(|block| block[i]).collect();
 
-            // solve single-char xor using technique from before
-            let mut results: Vec<(f64, u8)> = (0u8..=255u8)
-                .map(|byte| {
-                    let decrypted = xor_single_byte(&transposed_block, &byte);
-                    let score = englishness(&decrypted);
-                    (score, byte)
+            // solve single-char xor using similar technique as before
+            let top_result: XORResult = (0u8..=255u8)
+                .map(|byte| XORResult {
+                    score: englishness(&crypto::xor_single_byte(&transposed_block, &byte)),
+                    byte,
                 })
-                .collect();
+                .max_by(|a, b| a.score.partial_cmp(&b.score).unwrap())
+                .unwrap();
 
-            results.sort_by(|(a, _), (b, _)| b.partial_cmp(&a).unwrap());
-
-            key.push(results[0].1);
+            key_candidate.push(top_result.byte);
         }
 
-        // ok... now we have a key
-        println!("ATTEMPT WITH {}", str::from_utf8(&key).unwrap());
-        println!("-----");
+        // ok... now we have a key candidate
+        println!("ATTEMPT WITH {}", str::from_utf8(&key_candidate).unwrap());
 
         // attempt decrypting text
-        let decrypted = xor_repeating_key(&bytes, &key);
-        println!("DECRYPTED TEXT {:?}", str::from_utf8(&decrypted).unwrap());
+        println!(
+            "DECRYPTED TEXT {:?}",
+            str::from_utf8(&crypto::xor_repeating_key(&bytes, &key_candidate)).unwrap()
+        );
+
         println!("-----");
     }
 }
